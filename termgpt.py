@@ -6,30 +6,23 @@ import time
 import readline
 from pygments import highlight
 from pygments.lexers import guess_lexer
-from pygments.lexers import get_lexer_by_name
 from pygments.formatters import TerminalFormatter
-from pygments.token import (Keyword, Name, Comment, String,
-                            Error, Number, Operator, Generic,
-                            Token, Whitespace)
-from pygments import highlight
+from pygments.token import (Token, Comment, Keyword, Name, String, Number)
 import colorama
-
 
 # custom color scheme
 COLOR_SCHEME = {
-    Token:              ('gray',                 'gray'),
-    Comment:            ('magenta',     'brightmagenta'),
-    Comment.Preproc:    ('magenta',     'brightmagenta'),
-    Keyword:            ('blue',                   '**'),
-    Keyword.Type:       ('green',       '*brightgreen*'),
-    Operator.Word:      ('**',                     '**'),
-    Name.Builtin:       ('cyan',           'brightblue'),
-    Name.Function:      ('blue',           'brightblue'),
-    Name.Class:         ('_green_',        'brightblue'),
-    Name.Decorator:     ('magenta',     'brightmagenta'),
-    Name.Variable:      ('blue',           'brightblue'),
-    String:             ('yellow',       'brightyellow'),
-    Number:             ('blue',         'brightyellow')
+    Token: ('gray', 'gray'),
+    Comment: ('magenta', 'brightmagenta'),
+    Keyword: ('blue', '**'),
+    Keyword.Type: ('green', '*brightgreen*'),
+    Name.Builtin: ('cyan', 'brightblue'),
+    Name.Function: ('blue', 'brightblue'),
+    Name.Class: ('_green_', 'brightblue'),
+    Name.Decorator: ('magenta', 'brightmagenta'),
+    Name.Variable: ('blue', 'brightblue'),
+    String: ('yellow', 'brightyellow'),
+    Number: ('blue', 'brightyellow')
 }
 
 # Init colors
@@ -41,7 +34,7 @@ openai.api_key = os.getenv("OPENAI_API_KEY")
 if not openai.api_key:
     print("OpenAI API key not found. "
           "Please set the OPENAI_API_KEY environment variable.")
-    exit()
+    sys.exit()
 
 
 def colorize_code(code):
@@ -59,18 +52,20 @@ def emulate_typing(message):
     print(flush=True)
 
 
-def process_file(file_path):
-    """Process content from a file"""
-    try:
-        if file_path:
-            with open(file_path, 'r') as file:
-                return file.read()
-        else:
-            print("File does not exist")
-            return None  # Return None to indicate an error
-    except FileNotFoundError as e:
-        print(f"File not found: {file_path}")
-        return None  # Return None to indicate an error
+def process_file(user_input):
+    """Process content with a file"""
+    if isinstance(user_input, list):
+        user_input = ' '.join(user_input)
+
+    file_mentions = [word for word in user_input.split()
+                     if os.path.isfile(word)]
+    if file_mentions:
+        for file_mention in file_mentions:
+            with open(file_mention, 'r') as file:
+                file_content = file.read()
+                user_input = user_input.replace(
+                    file_mention, file_content).strip()
+    return user_input
 
 
 def print_chatgpt_response(answer):
@@ -98,35 +93,21 @@ messages = [{
 }]
 
 if __name__ == "__main__":
-
     # Main loop
     file_processed = False
 
     while True:
         try:
+            # non-interactive mode
             if not file_processed and len(sys.argv) > 1:
-                notes, file, *_ = sys.argv[1:]
-                processed_file = process_file(file)
-                question = f"{notes}\n{processed_file}"
+                question = process_file(sys.argv[1:])
                 file_processed = True
             else:
-                # Get user input
+                # Get user input in interactive mode
                 user_input = input(colorama.Fore.CYAN +
                                    'You: ' + colorama.Style.RESET_ALL)
+                question = process_file(user_input)
 
-                # Check if there is a file mentioned in the user input
-                file_mentions = [
-                    word for word in user_input.split()
-                    if os.path.isfile(word)]
-                if file_mentions:
-                    for file_mention in file_mentions:
-                        with open(file_mention, 'r') as file:
-                            file_content = file.read()
-                            user_input = user_input.replace(
-                                file_mention, file_content).strip()
-                    question = user_input
-                else:
-                    question = user_input
             # Check for exit command
             if question.lower() == 'quit' or question.lower() == 'exit':
                 break
