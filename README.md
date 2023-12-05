@@ -25,7 +25,7 @@ To set up the project for use, follow these steps:
 
 ### Prerequisites
 
-Ensure you have the following prerequisites installed:
+Ensure you have the following prerequisites:
 
 - Python 3.x
 - OPENAI_API_KEY
