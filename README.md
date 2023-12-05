@@ -59,6 +59,7 @@ Follow these steps to get program running:
 
     ```
     replace ```<your token>``` with your openai token
+
     replace ~/.bashrc with your shell config path only if not using bash
 
 5. Add script to directory in your PATH
@@ -83,4 +84,9 @@ Here are instructions on how to use the program:
 * ```chatgpt your prompt```
 
   * example ```chatgpt what is a more polite way to write this test1.txt```
+
   just like you'd do in interactive mode
+
+## CREDITS
+
+* [maksimKorzh](https://github.com/maksimKorzh/chatgpt-cli)
