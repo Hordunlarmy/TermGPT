@@ -1,0 +1,4 @@
+openai
+readline
+pygments
+colorama
