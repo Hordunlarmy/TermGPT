@@ -61,8 +61,16 @@ def emulate_typing(message):
 
 def process_file(file_path):
     """Process content from a file"""
-    with open(file_path, 'r') as file:
-        return file.read()
+    try:
+        if file_path:
+            with open(file_path, 'r') as file:
+                return file.read()
+        else:
+            print("File does not exist")
+            return None  # Return None to indicate an error
+    except FileNotFoundError as e:
+        print(f"File not found: {file_path}")
+        return None  # Return None to indicate an error
 
 
 def print_chatgpt_response(answer):

@@ -1,0 +1,14 @@
+Traceback (most recent call last):
+  File "/home/odun/TermGPT/termgpt.py", line 104, in <module>
+    processed_file = process_file(file)
+  File "/home/odun/TermGPT/termgpt.py", line 65, in process_file
+    with open(file_path, 'r') as file:
+FileNotFoundError: [Errno 2] No such file or directory: 'tect1.txt'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/odun/TermGPT/termgpt.py", line 153, in <module>
+    except openai.error.RateLimitError as e:
+AttributeError: module 'openai' has no attribute 'error'
+

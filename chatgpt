@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+# Runs the termgpt python program
+
+# Check if at least one argument is provided
+if [ "$#" -eq 0 ]; then
+    python3 ~/TermGPT/termgpt.py
+else
+    python3 ~/TermGPT/termgpt.py "$@"
+fi
