@@ -76,6 +76,7 @@ Here are instructions on how to use the program:
 * run ```chatgpt``` 
   * pass file in prompt usage
   * ![file usage git](https://i.imgur.com/9sOR7rX.gif)
+  * Use tab to for multipleline in prompt
 
 * ```exit``` or ```quit``` to leave
 
