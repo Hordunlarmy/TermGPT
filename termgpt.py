@@ -21,11 +21,6 @@ messages = [{"role": "system", "content": "You are a helpful assistant."}]
 HISTORY_FILE = os.path.expanduser("~/.chatgpt_terminal_history")
 
 
-def save_history():
-    """Save the command history to the history file."""
-    readline.write_history_file(HISTORY_FILE)
-
-
 def delete_history():
     """Delete the history file."""
     if os.path.exists(HISTORY_FILE):
@@ -86,6 +81,29 @@ async def fetch_response(client, model, messages):
         print(f"An error occurred: {e}")
 
 
+def extract_file_content_from_prompt(prompt_text):
+    """Extract file references and replace them with their content."""
+    # Match file names or paths in the prompt
+    file_pattern = re.compile(
+        r"\b\S+\.\w+\b"
+    )  # Match words with extensions like `.py`, `.txt`, etc.
+    matches = file_pattern.findall(prompt_text)
+
+    for match in matches:
+        if os.path.isfile(match):
+            try:
+                with open(match, "r") as file:
+                    file_content = file.read()
+                    # Add file content to the prompt
+                    prompt_text = prompt_text.replace(
+                        match, f"\n[File {match}]\n{file_content}\n"
+                    )
+            except Exception as e:
+                print(f"[bold red]Error reading {match}:[/bold red] {e}")
+
+    return prompt_text
+
+
 async def main(prompt_text=None):
     # Ensure the API key is set
     api_key = os.environ.get("OPENAI_API_KEY")
@@ -129,8 +147,11 @@ async def main(prompt_text=None):
             wrap_lines=True,
         )
 
+    # Extract and expand file content from the prompt
+    expanded_prompt = extract_file_content_from_prompt(prompt_text)
+
     # Add user message to the conversation
-    messages.append({"role": "user", "content": prompt_text})
+    messages.append({"role": "user", "content": expanded_prompt})
 
     # Fetch and print response from OpenAI
     await fetch_response(client, "gpt-4", messages)
@@ -168,6 +189,6 @@ if __name__ == "__main__":
             prompt_text = None  # Reset prompt for interactive mode
         except KeyboardInterrupt:
             # Handle Ctrl+C or other interrupt signals
-            delete_history()
+            # delete_history()
             print("\n[bold red]Exiting...[/bold red]")
             break
