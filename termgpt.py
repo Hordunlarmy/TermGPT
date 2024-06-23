@@ -180,7 +180,8 @@ async def main(prompt_text=None):
     messages.append({"role": "user", "content": expanded_prompt})
 
     # Fetch and print response from OpenAI
-    await fetch_response(client, "gpt-4", messages)
+    # await fetch_response(client, "gpt-4", messages)
+    await fetch_response(client, "gpt-3.5-turbo", messages)
 
 
 def run_async_function(async_fn, *args, **kwargs):
